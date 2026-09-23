@@ -1,0 +1,50 @@
+services:
+  canchas-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: canchas
+      POSTGRES_USER: canchas
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-canchas}
+    ports:
+      - "5433:5432"
+    volumes:
+      - canchas_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U canchas -d canchas"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # panel web: http://localhost:15672 (guest/guest)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      retries: 10
+
+  canchas-api:
+    build: .
+    env_file: .env
+    ports:
+      - "8002:8000"
+    depends_on:
+      canchas-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  canchas_data:
