@@ -41,3 +41,13 @@ def dar_de_baja(sesion: Session, cancha: CanchaTabla):
     """Baja lógica: la cancha queda guardada pero inactiva."""
     cancha.activa = False
     sesion.commit()
+
+
+def buscar_por_id_para_modificar(sesion: Session, id_cancha: int):
+    """Lee la cancha y la deja bloqueada (SELECT ... FOR UPDATE) hasta el commit.
+    Mientras tanto, cualquier otra transacción que quiera modificar algo de esta
+    misma cancha tiene que esperar: las operaciones sobre una cancha se ejecutan
+    de a una."""
+    return sesion.scalars(
+        select(CanchaTabla).where(CanchaTabla.id == id_cancha).with_for_update()
+    ).first()

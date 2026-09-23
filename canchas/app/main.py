@@ -10,7 +10,7 @@ import logging
 from app.config import NOMBRE_APP, REDIS_URL, RABBITMQ_URL
 from app.db import engine, Base
 from app.datos import tablas  # noqa: F401  (registra las tablas en Base)
-from app.rutas import rutas_canchas
+from app.rutas import rutas_canchas, rutas_bloqueos
 
 log = logging.getLogger("canchas")
 
@@ -31,6 +31,7 @@ app = FastAPI(
 )
 
 app.include_router(rutas_canchas.router)
+app.include_router(rutas_bloqueos.router)
 
 
 @app.exception_handler(Exception)
