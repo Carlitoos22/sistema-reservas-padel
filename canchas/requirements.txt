@@ -8,3 +8,4 @@ redis
 pika
 pytest
 httpx
+fakeredis

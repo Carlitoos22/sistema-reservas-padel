@@ -1,6 +1,7 @@
 from datetime import date
 from sqlalchemy.orm import Session
 from app.datos import repositorio_bloqueos, repositorio_canchas
+from app import cache
 from app.modelos.bloqueo import BloqueoEntrada
 from app.controladores.controlador_canchas import CanchaNoEncontrada
 
@@ -44,7 +45,11 @@ def crear_bloqueo(sesion: Session, id_cancha: int, datos: BloqueoEntrada):
         sesion, id_cancha, datos.fecha, datos.hora_desde, datos.hora_hasta
     ):
         raise BloqueoSuperpuesto()
-    return repositorio_bloqueos.crear(sesion, id_cancha, datos.model_dump())
+    bloqueo = repositorio_bloqueos.crear(sesion, id_cancha, datos.model_dump())
+    # Se invalida después del commit: si se invalidara antes, una consulta
+    # concurrente podría volver a cachear la disponibilidad sin el bloqueo.
+    cache.invalidar_fecha(id_cancha, bloqueo.fecha)
+    return bloqueo
 
 
 def listar_bloqueos(sesion: Session, id_cancha: int, fecha: date | None):
@@ -57,4 +62,6 @@ def eliminar_bloqueo(sesion: Session, id_bloqueo: int):
     bloqueo = repositorio_bloqueos.buscar_por_id(sesion, id_bloqueo)
     if bloqueo is None:
         raise BloqueoNoEncontrado()
+    cancha_id, fecha = bloqueo.cancha_id, bloqueo.fecha
     repositorio_bloqueos.eliminar(sesion, bloqueo)
+    cache.invalidar_fecha(cancha_id, fecha)

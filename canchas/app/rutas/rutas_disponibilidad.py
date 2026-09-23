@@ -1,5 +1,5 @@
 from datetime import date
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy.orm import Session
 from app.db import obtener_sesion
 from app.modelos.disponibilidad import Disponibilidad
@@ -21,10 +21,16 @@ router = APIRouter(prefix="/api/v1", tags=["Disponibilidad"])
         422: {"description": "Fecha inválida o pasada"},
     },
 )
-def consultar(id_cancha: int, fecha: date, sesion: Session = Depends(obtener_sesion)):
-    """Devuelve todos los turnos de la cancha para la fecha, con su estado."""
+def consultar(id_cancha: int, fecha: date, response: Response, sesion: Session = Depends(obtener_sesion)):
+    """Devuelve todos los turnos de la cancha para la fecha, con su estado.
+
+    El header de respuesta `X-Cache` indica si el resultado salió de Redis (HIT)
+    o se calculó desde la base (MISS).
+    """
     try:
-        return ctrl.consultar_disponibilidad(sesion, id_cancha, fecha)
+        disponibilidad, origen = ctrl.consultar_disponibilidad(sesion, id_cancha, fecha)
+        response.headers["X-Cache"] = origen
+        return disponibilidad
     except CanchaNoEncontrada:
         raise HTTPException(404, "Cancha no encontrada")
     except CanchaInactiva:

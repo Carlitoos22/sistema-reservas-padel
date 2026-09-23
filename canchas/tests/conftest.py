@@ -1,3 +1,4 @@
+import fakeredis
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -7,13 +8,23 @@ from sqlalchemy.pool import StaticPool
 from app.main import app
 from app.db import Base, obtener_sesion
 from app.datos import tablas  # noqa: F401
+from app import cache
 
 # Los tests usan una base SQLite en memoria: son rápidos y no necesitan Docker.
 # Cada test arranca con la base vacía.
 
 
 @pytest.fixture
-def cliente():
+def redis_falso():
+    """Redis en memoria para los tests: se comporta igual que el real."""
+    falso = fakeredis.FakeRedis(decode_responses=True)
+    cache.usar_cliente(falso)
+    yield falso
+    cache.usar_cliente(None)
+
+
+@pytest.fixture
+def cliente(redis_falso):
     motor = create_engine("sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(motor)
     Sesion = sessionmaker(bind=motor)

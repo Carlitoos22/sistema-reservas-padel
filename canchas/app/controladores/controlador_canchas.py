@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from app.datos import repositorio_canchas
+from app import cache
 from app.modelos.cancha import CanchaEntrada
 
 # ===== CAPA DE CONTROLADORES =====
@@ -45,12 +46,16 @@ def actualizar_cancha(sesion: Session, id_cancha: int, datos: CanchaEntrada):
     if otra and otra.id != id_cancha:
         raise NombreDuplicado()
     try:
-        return repositorio_canchas.actualizar(sesion, cancha, datos.model_dump())
+        actualizada = repositorio_canchas.actualizar(sesion, cancha, datos.model_dump())
     except IntegrityError:
         sesion.rollback()
         raise NombreDuplicado()
+    # Cambiar horario o duración cambia la grilla de todas las fechas.
+    cache.invalidar_cancha(id_cancha)
+    return actualizada
 
 
 def dar_de_baja_cancha(sesion: Session, id_cancha: int):
     cancha = obtener_cancha(sesion, id_cancha)
     repositorio_canchas.dar_de_baja(sesion, cancha)
+    cache.invalidar_cancha(id_cancha)

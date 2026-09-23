@@ -1,6 +1,7 @@
 from datetime import date, datetime, time, timedelta
 from sqlalchemy.orm import Session
 from app.datos import repositorio_canchas, repositorio_bloqueos
+from app import cache
 from app.modelos.disponibilidad import Disponibilidad, Turno, EstadoTurno
 from app.controladores.controlador_canchas import CanchaNoEncontrada
 from app.controladores.controlador_bloqueos import CanchaInactiva, FechaPasada
@@ -31,7 +32,9 @@ def se_superponen(desde_a: time, hasta_a: time, desde_b: time, hasta_b: time):
     return desde_a < hasta_b and desde_b < hasta_a
 
 
-def consultar_disponibilidad(sesion: Session, id_cancha: int, fecha: date) -> Disponibilidad:
+def consultar_disponibilidad(sesion: Session, id_cancha: int, fecha: date):
+    """Devuelve (disponibilidad, origen), donde origen es "HIT" si vino de Redis
+    o "MISS" si se calculó desde la base."""
     cancha = repositorio_canchas.buscar_por_id(sesion, id_cancha)
     if cancha is None:
         raise CanchaNoEncontrada()
@@ -39,6 +42,13 @@ def consultar_disponibilidad(sesion: Session, id_cancha: int, fecha: date) -> Di
         raise CanchaInactiva()
     if fecha < date.today():
         raise FechaPasada()
+
+    # Las validaciones de arriba se hacen siempre contra la base (son baratas y
+    # garantizan que nunca se sirva caché de una cancha dada de baja).
+    clave = cache.clave_disponibilidad(id_cancha, fecha)
+    guardado = cache.leer(clave)
+    if guardado is not None:
+        return Disponibilidad.model_validate_json(guardado), "HIT"
 
     bloqueos = repositorio_bloqueos.listar_por_cancha(sesion, id_cancha, fecha)
 
@@ -48,4 +58,6 @@ def consultar_disponibilidad(sesion: Session, id_cancha: int, fecha: date) -> Di
         estado = EstadoTurno.bloqueado if bloqueado else EstadoTurno.libre
         turnos.append(Turno(hora_inicio=inicio, hora_fin=fin, estado=estado))
 
-    return Disponibilidad(cancha_id=id_cancha, fecha=fecha, turnos=turnos)
+    resultado = Disponibilidad(cancha_id=id_cancha, fecha=fecha, turnos=turnos)
+    cache.guardar(clave, resultado.model_dump_json())
+    return resultado, "MISS"
