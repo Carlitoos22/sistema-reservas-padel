@@ -11,7 +11,7 @@ Broker: RabbitMQ. Formato: JSON (`content_type: application/json`), mensajes per
 | Exchange de fallidos | `reservas.dlx` | fanout, durable | Canchas |
 | Cola de fallidos | `canchas.reservas.fallidos` | durable | Canchas |
 
-## Eventos consumidos
+## Eventos consumidos (los publica Reservas)
 
 | Evento | Routing key | Productor | Consumidor | Efecto en Canchas |
 |---|---|---|---|---|
@@ -51,3 +51,40 @@ Broker: RabbitMQ. Formato: JSON (`content_type: application/json`), mensajes per
 - **Orden:** si `ReservaCancelada` llega antes que `ReservaCreada`, la reserva queda cancelada y la creación posterior se ignora.
 - **Reintentos:** ante un error transitorio (base caída) se republica con el header `x-reintentos`, hasta 3 veces con espera de 1, 2 y 3 s.
 - **Fallidos:** mensajes mal formados, eventos no aplicables (cancha inexistente) o que agotaron los reintentos van a `canchas.reservas.fallidos` para revisión manual.
+
+## Eventos publicados (los publica Canchas)
+
+| Evento | Exchange | Routing key | Productor | Consumidor esperado | Cuándo |
+|---|---|---|---|---|---|
+| `TurnoBloqueado` | `canchas` (topic, durable) | `turno.bloqueado` | Canchas (proceso `canchas-publicador`) | Reservas | Al crear un bloqueo |
+
+### Contrato
+
+```json
+{
+  "event_id": "b1e2c3d4-0000-4a5b-8c9d-112233445566",
+  "tipo": "TurnoBloqueado",
+  "ocurrido_en": "2026-09-30T19:05:00",
+  "correlation_id": "bloqueo-3",
+  "datos": {
+    "bloqueo_id": 3,
+    "cancha_id": 1,
+    "fecha": "2026-10-01",
+    "hora_desde": "14:00:00",
+    "hora_hasta": "18:00:00",
+    "motivo": "Mantenimiento",
+    "reservas_afectadas": [21, 22]
+  }
+}
+```
+
+`reservas_afectadas` lista las reservas activas que se superponen con la franja bloqueada, según la ocupación que Canchas conoce por eventos. Reservas decide qué hacer con ellas (avisar al jugador, reprogramar o cancelar); Canchas no modifica reservas.
+
+### Garantías del productor (patrón Transactional Outbox)
+
+- **Atomicidad:** el bloqueo y el evento se guardan en la misma transacción (tabla `outbox`). No puede quedar un bloqueo sin evento ni un evento de un bloqueo que no se guardó.
+- **Independencia del broker:** crear un bloqueo no depende de RabbitMQ. Si está caído, el evento queda pendiente en el outbox y se publica cuando vuelve.
+- **Confirmación:** el publicador usa *publisher confirms*; un evento se marca como publicado solo después de que RabbitMQ confirma haberlo recibido.
+- **Al menos una vez:** si el publicador se cae entre la confirmación y el marcado, el evento se vuelve a publicar. El consumidor debe deduplicar por `event_id` (también viaja como `message_id` de AMQP).
+- **Orden:** los pendientes se publican en orden de creación.
+- **Cola del consumidor:** Canchas es dueño del exchange, no de las colas. Cada consumidor declara su propia cola durable enlazada a `turno.*`. En este branch, `scripts/escuchar_eventos.py` simula a Reservas con la cola `simulador.reservas`.

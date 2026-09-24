@@ -59,5 +59,16 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  canchas-publicador:
+    build: .
+    command: ["python", "-m", "app.publicador"]
+    env_file: .env
+    restart: on-failure
+    depends_on:
+      canchas-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
 volumes:
   canchas_data:

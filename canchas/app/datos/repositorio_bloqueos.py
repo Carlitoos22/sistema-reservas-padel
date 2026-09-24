@@ -28,11 +28,11 @@ def buscar_por_id(sesion: Session, id_bloqueo: int):
     return sesion.get(BloqueoTabla, id_bloqueo)
 
 
-def crear(sesion: Session, cancha_id: int, datos: dict):
+def agregar(sesion: Session, cancha_id: int, datos: dict):
+    """Sin commit: el controlador confirma el bloqueo junto con su evento."""
     bloqueo = BloqueoTabla(cancha_id=cancha_id, **datos)
     sesion.add(bloqueo)
-    sesion.commit()
-    sesion.refresh(bloqueo)
+    sesion.flush()  # asigna el id, que va dentro del evento
     return bloqueo
 
 

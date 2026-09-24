@@ -26,17 +26,6 @@ def evento(tipo="ReservaCreada", reserva=10, cancha=1, hora="09:30", fin="11:00"
     }
 
 
-@pytest.fixture
-def sesion(cliente):
-    """Sesión sobre la misma base que usa el cliente de prueba."""
-    from app.db import obtener_sesion
-    from app.main import app
-    generador = app.dependency_overrides[obtener_sesion]()
-    s = next(generador)
-    yield s
-    s.close()
-
-
 def aplicar(sesion, datos):
     return procesar_evento(sesion, EventoReserva.model_validate(datos))
 

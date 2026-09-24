@@ -39,3 +39,12 @@ def cliente(redis_falso):
     app.dependency_overrides[obtener_sesion] = sesion_de_prueba
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def sesion(cliente):
+    """Sesión sobre la misma base que usa el cliente de prueba."""
+    generador = app.dependency_overrides[obtener_sesion]()
+    s = next(generador)
+    yield s
+    s.close()

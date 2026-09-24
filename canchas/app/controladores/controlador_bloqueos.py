@@ -4,6 +4,7 @@ from app.datos import repositorio_bloqueos, repositorio_canchas
 from app import cache
 from app.modelos.bloqueo import BloqueoEntrada
 from app.controladores.controlador_canchas import CanchaNoEncontrada
+from app.controladores.eventos_canchas import registrar_turno_bloqueado
 
 # ===== CAPA DE CONTROLADORES: Bloqueos =====
 
@@ -45,7 +46,13 @@ def crear_bloqueo(sesion: Session, id_cancha: int, datos: BloqueoEntrada):
         sesion, id_cancha, datos.fecha, datos.hora_desde, datos.hora_hasta
     ):
         raise BloqueoSuperpuesto()
-    bloqueo = repositorio_bloqueos.crear(sesion, id_cancha, datos.model_dump())
+    bloqueo = repositorio_bloqueos.agregar(sesion, id_cancha, datos.model_dump())
+    # El bloqueo y su evento TurnoBloqueado se confirman en UNA transacción
+    # (outbox). Si RabbitMQ está caído, el bloqueo se guarda igual y el evento
+    # sale cuando vuelva; si la transacción falla, no queda ni uno ni otro.
+    registrar_turno_bloqueado(sesion, bloqueo)
+    sesion.commit()
+    sesion.refresh(bloqueo)
     # Se invalida después del commit: si se invalidara antes, una consulta
     # concurrente podría volver a cachear la disponibilidad sin el bloqueo.
     cache.invalidar_fecha(id_cancha, bloqueo.fecha)

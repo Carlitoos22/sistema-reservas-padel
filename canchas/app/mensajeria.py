@@ -28,3 +28,18 @@ def declarar_topologia(canal):
     canal.queue_declare(COLA, durable=True, arguments={"x-dead-letter-exchange": EXCHANGE_FALLIDOS})
     for clave in CLAVES.values():
         canal.queue_bind(COLA, EXCHANGE, routing_key=clave)
+
+
+# ----- Eventos que PUBLICA este módulo -----
+#
+#   exchange "canchas" (topic)
+#       └── turno.bloqueado ─► colas de quien quiera escuchar (Reservas)
+#
+# Canchas es dueño de este exchange; no crea colas de otros servicios.
+
+EXCHANGE_CANCHAS = "canchas"
+CLAVE_TURNO_BLOQUEADO = "turno.bloqueado"
+
+
+def declarar_exchange_canchas(canal):
+    canal.exchange_declare(EXCHANGE_CANCHAS, exchange_type="topic", durable=True)

@@ -73,7 +73,7 @@ def conectar(intentos=10):
     for intento in range(1, intentos + 1):
         try:
             return pika.BlockingConnection(pika.URLParameters(RABBITMQ_URL))
-        except pika.exceptions.AMQPConnectionError:
+        except (pika.exceptions.AMQPConnectionError, OSError):  # OSError: p. ej. socket.gaierror
             log.warning("RabbitMQ no disponible (intento %s de %s)", intento, intentos)
             time.sleep(3)
     raise RuntimeError("No se pudo conectar a RabbitMQ")
@@ -81,6 +81,7 @@ def conectar(intentos=10):
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.getLogger("pika").setLevel(logging.WARNING)  # los logs de conexión tapaban los del negocio
     Base.metadata.create_all(engine)
     conexion = conectar()
     canal = conexion.channel()
