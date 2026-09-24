@@ -1,6 +1,6 @@
 from datetime import date, datetime, time, timedelta
 from sqlalchemy.orm import Session
-from app.datos import repositorio_canchas, repositorio_bloqueos
+from app.datos import repositorio_canchas, repositorio_bloqueos, repositorio_ocupaciones
 from app import cache
 from app.modelos.disponibilidad import Disponibilidad, Turno, EstadoTurno
 from app.controladores.controlador_canchas import CanchaNoEncontrada
@@ -51,11 +51,18 @@ def consultar_disponibilidad(sesion: Session, id_cancha: int, fecha: date):
         return Disponibilidad.model_validate_json(guardado), "HIT"
 
     bloqueos = repositorio_bloqueos.listar_por_cancha(sesion, id_cancha, fecha)
+    ocupaciones = repositorio_ocupaciones.listar_activas(sesion, id_cancha, fecha)
 
     turnos = []
     for inicio, fin in generar_turnos(cancha.hora_apertura, cancha.hora_cierre, cancha.duracion_turno_min):
-        bloqueado = any(se_superponen(inicio, fin, b.hora_desde, b.hora_hasta) for b in bloqueos)
-        estado = EstadoTurno.bloqueado if bloqueado else EstadoTurno.libre
+        # Bloqueado tiene prioridad: es una decisión del dueño del complejo.
+        # (No deberían coincidir, porque la validación rechaza turnos bloqueados.)
+        if any(se_superponen(inicio, fin, b.hora_desde, b.hora_hasta) for b in bloqueos):
+            estado = EstadoTurno.bloqueado
+        elif any(se_superponen(inicio, fin, o.hora_inicio, o.hora_fin) for o in ocupaciones):
+            estado = EstadoTurno.ocupado
+        else:
+            estado = EstadoTurno.libre
         turnos.append(Turno(hora_inicio=inicio, hora_fin=fin, estado=estado))
 
     resultado = Disponibilidad(cancha_id=id_cancha, fecha=fecha, turnos=turnos)

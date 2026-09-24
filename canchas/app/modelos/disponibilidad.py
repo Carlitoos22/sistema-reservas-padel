@@ -10,7 +10,7 @@ from pydantic import BaseModel
 class EstadoTurno(str, Enum):
     libre = "libre"
     bloqueado = "bloqueado"
-    ocupado = "ocupado"  # se completa con los eventos del módulo de Reservas
+    ocupado = "ocupado"  # según los eventos ReservaCreada / ReservaCancelada
 
 
 class Turno(BaseModel):

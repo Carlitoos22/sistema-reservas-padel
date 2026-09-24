@@ -46,5 +46,18 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  canchas-consumidor:
+    build: .
+    command: ["python", "-m", "app.consumidor"]
+    env_file: .env
+    restart: on-failure
+    depends_on:
+      canchas-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
 volumes:
   canchas_data:
