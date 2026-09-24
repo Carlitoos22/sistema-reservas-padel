@@ -33,12 +33,14 @@ def declarar_topologia(canal):
 # ----- Eventos que PUBLICA este módulo -----
 #
 #   exchange "canchas" (topic)
-#       └── turno.bloqueado ─► colas de quien quiera escuchar (Reservas)
+#       ├── turno.bloqueado ─┐
+#       └── turno.conflicto ─┴─► colas de quien quiera escuchar (Reservas)
 #
 # Canchas es dueño de este exchange; no crea colas de otros servicios.
 
 EXCHANGE_CANCHAS = "canchas"
 CLAVE_TURNO_BLOQUEADO = "turno.bloqueado"
+CLAVE_RESERVA_EN_CONFLICTO = "turno.conflicto"
 
 
 def declarar_exchange_canchas(canal):

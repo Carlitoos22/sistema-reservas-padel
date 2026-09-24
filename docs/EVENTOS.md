@@ -57,6 +57,7 @@ Broker: RabbitMQ. Formato: JSON (`content_type: application/json`), mensajes per
 | Evento | Exchange | Routing key | Productor | Consumidor esperado | Cuándo |
 |---|---|---|---|---|---|
 | `TurnoBloqueado` | `canchas` (topic, durable) | `turno.bloqueado` | Canchas (proceso `canchas-publicador`) | Reservas | Al crear un bloqueo |
+| `ReservaEnConflicto` | `canchas` (topic, durable) | `turno.conflicto` | Canchas (proceso `canchas-publicador`) | Reservas | Al recibir `ReservaCreada` para una franja que ya estaba bloqueada |
 
 ### Contrato
 
@@ -79,6 +80,29 @@ Broker: RabbitMQ. Formato: JSON (`content_type: application/json`), mensajes per
 ```
 
 `reservas_afectadas` lista las reservas activas que se superponen con la franja bloqueada, según la ocupación que Canchas conoce por eventos. Reservas decide qué hacer con ellas (avisar al jugador, reprogramar o cancelar); Canchas no modifica reservas.
+
+### Contrato de `ReservaEnConflicto`
+
+```json
+{
+  "event_id": "5d1e...",
+  "tipo": "ReservaEnConflicto",
+  "ocurrido_en": "2026-09-30T19:06:10",
+  "correlation_id": "reserva-30",
+  "datos": {
+    "reserva_id": 30,
+    "cancha_id": 1,
+    "fecha": "2026-10-01",
+    "hora_inicio": "14:00:00",
+    "hora_fin": "15:30:00",
+    "bloqueos": [
+      {"bloqueo_id": 3, "hora_desde": "14:00:00", "hora_hasta": "18:00:00", "motivo": "Torneo"}
+    ]
+  }
+}
+```
+
+Entre los dos eventos, toda reserva que choca con un bloqueo se informa **exactamente una vez**: en `reservas_afectadas` de `TurnoBloqueado` si Canchas conocía la reserva al crear el bloqueo, o como `ReservaEnConflicto` si la reserva llegó después. Ver `docs/CONCURRENCIA.md`.
 
 ### Garantías del productor (patrón Transactional Outbox)
 
