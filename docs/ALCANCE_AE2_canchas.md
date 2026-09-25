@@ -11,7 +11,7 @@ Sistema de reservas de turnos para canchas de pádel (mismo escenario del AE1, d
 ## 2. Versión base del AE1
 
 Repositorio: https://github.com/Carlitoos22/sistema-reservas-padel
-Versión de partida: `<completar con el tag/commit indicado por la cátedra>` (último commit de la entrega AE1: `b8204f0`).
+Versión de partida: tag `v1.0-ae1`, sobre el commit `b8204f0` (último commit de la entrega del AE1).
 
 ## 3. Módulo seleccionado
 

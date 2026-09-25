@@ -4,7 +4,7 @@ Módulo individual de la AE2 de Paradigmas y Lenguajes de Programación III (UCP
 
 - **Estudiante:** Salazar, Juan Martín
 - **Branch:** `ae2/juan-salazar`
-- **Versión base del AE1:** commit `b8204f0` de `main` (CRUD de reservas en archivo JSON)
+- **Versión base del AE1:** tag `v1.0-ae1` (commit `b8204f0` de `main`, CRUD de reservas en archivo JSON)
 - **Alcance comprometido:** [`docs/ALCANCE_AE2_canchas.md`](../docs/ALCANCE_AE2_canchas.md)
 
 En el AE1 la cancha era un texto libre dentro de la reserva (`"cancha": "cancha 2"`), sin grilla horaria ni forma de saber qué turnos existían. Este servicio se hace cargo de las canchas, sus turnos, los bloqueos de franjas y la disponibilidad. Tiene su propia base de datos y se entera de las reservas por eventos, sin leer la base del módulo de Reservas.
