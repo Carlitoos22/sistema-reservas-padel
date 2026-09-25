@@ -1,0 +1,972 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Servicio de Canchas",
+    "description": "AE2 - Módulo de Canchas y Disponibilidad",
+    "version": "2.0.0"
+  },
+  "paths": {
+    "/api/v1/canchas": {
+      "get": {
+        "tags": [
+          "Canchas"
+        ],
+        "summary": "Listar",
+        "operationId": "listar_api_v1_canchas_get",
+        "parameters": [
+          {
+            "name": "incluir_inactivas",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Incluir Inactivas"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Cancha"
+                  },
+                  "title": "Response Listar Api V1 Canchas Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Canchas"
+        ],
+        "summary": "Crear",
+        "operationId": "crear_api_v1_canchas_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CanchaEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cancha"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Ya existe una cancha con ese nombre"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/canchas/{id_cancha}": {
+      "get": {
+        "tags": [
+          "Canchas"
+        ],
+        "summary": "Obtener",
+        "operationId": "obtener_api_v1_canchas__id_cancha__get",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cancha"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Canchas"
+        ],
+        "summary": "Actualizar",
+        "operationId": "actualizar_api_v1_canchas__id_cancha__put",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CanchaEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cancha"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "409": {
+            "description": "Ya existe una cancha con ese nombre"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Canchas"
+        ],
+        "summary": "Dar De Baja",
+        "description": "Baja lógica: la cancha deja de listarse pero no se borra de la base.",
+        "operationId": "dar_de_baja_api_v1_canchas__id_cancha__delete",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/canchas/{id_cancha}/bloqueos": {
+      "post": {
+        "tags": [
+          "Bloqueos"
+        ],
+        "summary": "Crear",
+        "operationId": "crear_api_v1_canchas__id_cancha__bloqueos_post",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BloqueoEntrada"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bloqueo"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "409": {
+            "description": "Cancha inactiva o franja superpuesta con otro bloqueo"
+          },
+          "422": {
+            "description": "Datos inválidos, fecha pasada o fuera del horario de la cancha"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Bloqueos"
+        ],
+        "summary": "Listar",
+        "operationId": "listar_api_v1_canchas__id_cancha__bloqueos_get",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          },
+          {
+            "name": "fecha",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Fecha"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Bloqueo"
+                  },
+                  "title": "Response Listar Api V1 Canchas  Id Cancha  Bloqueos Get"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/bloqueos/{id_bloqueo}": {
+      "delete": {
+        "tags": [
+          "Bloqueos"
+        ],
+        "summary": "Eliminar",
+        "description": "Elimina el bloqueo y la franja vuelve a quedar disponible.",
+        "operationId": "eliminar_api_v1_bloqueos__id_bloqueo__delete",
+        "parameters": [
+          {
+            "name": "id_bloqueo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Bloqueo"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Bloqueo no encontrado"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/canchas/{id_cancha}/disponibilidad": {
+      "get": {
+        "tags": [
+          "Disponibilidad"
+        ],
+        "summary": "Consultar",
+        "description": "Devuelve todos los turnos de la cancha para la fecha, con su estado.\n\nEl header de respuesta `X-Cache` indica si el resultado salió de Redis (HIT)\no se calculó desde la base (MISS).",
+        "operationId": "consultar_api_v1_canchas__id_cancha__disponibilidad_get",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          },
+          {
+            "name": "fecha",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Fecha"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Disponibilidad"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Cancha no encontrada"
+          },
+          "409": {
+            "description": "La cancha está dada de baja"
+          },
+          "422": {
+            "description": "Fecha inválida o pasada"
+          }
+        }
+      }
+    },
+    "/api/v1/canchas/{id_cancha}/turnos/validar": {
+      "get": {
+        "tags": [
+          "Integración con Reservas"
+        ],
+        "summary": "Validar",
+        "description": "Indica si el turno existe y está disponible para reservar.\n\nSiempre responde 200 cuando los parámetros tienen formato válido;\nsi el turno no se puede reservar, `valido` es false y `motivo` explica por qué.\nSi es válido, devuelve además la hora de fin y el precio del turno.",
+        "operationId": "validar_api_v1_canchas__id_cancha__turnos_validar_get",
+        "parameters": [
+          {
+            "name": "id_cancha",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Id Cancha"
+            }
+          },
+          {
+            "name": "fecha",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Fecha"
+            }
+          },
+          {
+            "name": "hora_inicio",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "time",
+              "title": "Hora Inicio"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultadoValidacion"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Salud"
+        ],
+        "summary": "Health",
+        "description": "Informa si el servicio y sus dependencias (DB, Redis, RabbitMQ) responden.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Bloqueo": {
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "title": "Fecha",
+            "examples": [
+              "2026-10-15"
+            ]
+          },
+          "hora_desde": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Desde",
+            "examples": [
+              "14:00"
+            ]
+          },
+          "hora_hasta": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Hasta",
+            "examples": [
+              "18:00"
+            ]
+          },
+          "motivo": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Motivo",
+            "examples": [
+              "Mantenimiento del césped"
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cancha_id": {
+            "type": "integer",
+            "title": "Cancha Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fecha",
+          "hora_desde",
+          "hora_hasta",
+          "motivo",
+          "id",
+          "cancha_id"
+        ],
+        "title": "Bloqueo"
+      },
+      "BloqueoEntrada": {
+        "properties": {
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "title": "Fecha",
+            "examples": [
+              "2026-10-15"
+            ]
+          },
+          "hora_desde": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Desde",
+            "examples": [
+              "14:00"
+            ]
+          },
+          "hora_hasta": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Hasta",
+            "examples": [
+              "18:00"
+            ]
+          },
+          "motivo": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Motivo",
+            "examples": [
+              "Mantenimiento del césped"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "fecha",
+          "hora_desde",
+          "hora_hasta",
+          "motivo"
+        ],
+        "title": "BloqueoEntrada"
+      },
+      "Cancha": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Nombre",
+            "examples": [
+              "Cancha 1"
+            ]
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoCancha"
+          },
+          "techada": {
+            "type": "boolean",
+            "title": "Techada",
+            "default": false
+          },
+          "precio_turno": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,8}|(?=[\\d.]{1,11}0*$)\\d{0,8}\\.\\d{0,2}0*$)",
+            "title": "Precio Turno",
+            "examples": [
+              15000
+            ]
+          },
+          "hora_apertura": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Apertura",
+            "examples": [
+              "08:00"
+            ]
+          },
+          "hora_cierre": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Cierre",
+            "examples": [
+              "23:30"
+            ]
+          },
+          "duracion_turno_min": {
+            "type": "integer",
+            "maximum": 180.0,
+            "minimum": 30.0,
+            "title": "Duracion Turno Min",
+            "examples": [
+              90
+            ]
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "activa": {
+            "type": "boolean",
+            "title": "Activa"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "tipo",
+          "precio_turno",
+          "hora_apertura",
+          "hora_cierre",
+          "duracion_turno_min",
+          "id",
+          "activa"
+        ],
+        "title": "Cancha"
+      },
+      "CanchaEntrada": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Nombre",
+            "examples": [
+              "Cancha 1"
+            ]
+          },
+          "tipo": {
+            "$ref": "#/components/schemas/TipoCancha"
+          },
+          "techada": {
+            "type": "boolean",
+            "title": "Techada",
+            "default": false
+          },
+          "precio_turno": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*(?:\\d{0,8}|(?=[\\d.]{1,11}0*$)\\d{0,8}\\.\\d{0,2}0*$)"
+              }
+            ],
+            "title": "Precio Turno",
+            "examples": [
+              15000
+            ]
+          },
+          "hora_apertura": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Apertura",
+            "examples": [
+              "08:00"
+            ]
+          },
+          "hora_cierre": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Cierre",
+            "examples": [
+              "23:30"
+            ]
+          },
+          "duracion_turno_min": {
+            "type": "integer",
+            "maximum": 180.0,
+            "minimum": 30.0,
+            "title": "Duracion Turno Min",
+            "examples": [
+              90
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre",
+          "tipo",
+          "precio_turno",
+          "hora_apertura",
+          "hora_cierre",
+          "duracion_turno_min"
+        ],
+        "title": "CanchaEntrada"
+      },
+      "Disponibilidad": {
+        "properties": {
+          "cancha_id": {
+            "type": "integer",
+            "title": "Cancha Id"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "title": "Fecha"
+          },
+          "turnos": {
+            "items": {
+              "$ref": "#/components/schemas/Turno"
+            },
+            "type": "array",
+            "title": "Turnos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cancha_id",
+          "fecha",
+          "turnos"
+        ],
+        "title": "Disponibilidad"
+      },
+      "EstadoTurno": {
+        "type": "string",
+        "enum": [
+          "libre",
+          "bloqueado",
+          "ocupado"
+        ],
+        "title": "EstadoTurno"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MotivoRechazo": {
+        "type": "string",
+        "enum": [
+          "CANCHA_INEXISTENTE",
+          "CANCHA_INACTIVA",
+          "FECHA_PASADA",
+          "HORARIO_INVALIDO",
+          "TURNO_BLOQUEADO"
+        ],
+        "title": "MotivoRechazo"
+      },
+      "ResultadoValidacion": {
+        "properties": {
+          "valido": {
+            "type": "boolean",
+            "title": "Valido"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MotivoRechazo"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cancha_id": {
+            "type": "integer",
+            "title": "Cancha Id"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "title": "Fecha"
+          },
+          "hora_inicio": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Inicio"
+          },
+          "hora_fin": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hora Fin"
+          },
+          "precio_turno": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Precio Turno"
+          }
+        },
+        "type": "object",
+        "required": [
+          "valido",
+          "cancha_id",
+          "fecha",
+          "hora_inicio"
+        ],
+        "title": "ResultadoValidacion"
+      },
+      "TipoCancha": {
+        "type": "string",
+        "enum": [
+          "cristal",
+          "muro"
+        ],
+        "title": "TipoCancha"
+      },
+      "Turno": {
+        "properties": {
+          "hora_inicio": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Inicio"
+          },
+          "hora_fin": {
+            "type": "string",
+            "format": "time",
+            "title": "Hora Fin"
+          },
+          "estado": {
+            "$ref": "#/components/schemas/EstadoTurno"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hora_inicio",
+          "hora_fin",
+          "estado"
+        ],
+        "title": "Turno"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

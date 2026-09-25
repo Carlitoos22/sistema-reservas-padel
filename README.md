@@ -24,3 +24,14 @@ Luego abrir en el navegador: http://127.0.0.1:8000/docs
 - POST /api/v1/reservas - Crear una reserva
 - PUT /api/v1/reservas/{id} - Actualizar una reserva
 - DELETE /api/v1/reservas/{id} - Eliminar una reserva
+
+## AE2 – Módulo de Canchas y Disponibilidad (branch `ae2/juan-salazar`)
+
+Evolución individual de Salazar, Juan Martín a partir del commit `b8204f0` del AE1. El módulo vive en la carpeta [`canchas/`](canchas/) como un servicio aparte, con su propia base PostgreSQL, caché en Redis y mensajería con RabbitMQ, todo levantado con Docker Compose.
+
+- Ejecución, tests, API y demostración: [`canchas/README.md`](canchas/README.md)
+- Alcance individual: [`docs/ALCANCE_AE2_canchas.md`](docs/ALCANCE_AE2_canchas.md)
+- Decisiones de arquitectura: [`docs/DECISIONES.md`](docs/DECISIONES.md)
+- Catálogo de eventos: [`docs/EVENTOS.md`](docs/EVENTOS.md)
+- Caso de concurrencia: [`docs/CONCURRENCIA.md`](docs/CONCURRENCIA.md)
+- Contrato OpenAPI: [`docs/openapi.json`](docs/openapi.json)
