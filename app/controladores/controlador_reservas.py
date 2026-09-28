@@ -3,6 +3,7 @@ from app.datos import repositorio_reservas
 from app.modelos.reserva import ReservaBase
 from app.redis_client import redis_client
 from fastapi import HTTPException
+from app.rabbitmq_client import publicar_reserva_confirmada
 
 # ===== CAPA DE CONTROLADORES =====
 # Coordina las operaciones. Ahora recibe la sesión (db) y se la pasa al repositorio.
@@ -54,8 +55,10 @@ def crear_reserva(db: Session, datos: ReservaBase, idempotency_key: str = None):
         if idempotency_key:
             redis_client.set(f"idempotency:{idempotency_key}", reserva_creada.id, ex=3600)
 
-        return reserva_creada
+        # ===== RF-C: PUBLICAR EVENTO ASÍNCRONO =====
+        publicar_reserva_confirmada(reserva_creada)
 
+        return reserva_creada
     finally:
         redis_client.delete(llave_turno)
 
