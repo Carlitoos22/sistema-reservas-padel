@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 import os
+from app.database import engine, Base
+from app.modelos import reserva
 
 load_dotenv()   # carga las variables del archivo .env
 from fastapi import FastAPI
@@ -14,6 +16,9 @@ app = FastAPI(
     description="Hito 1 (AE1) - CRUD de Reservas",
     version="1.0.0"
 )
+
+# Crea las tablas en la base de datos si no existen
+Base.metadata.create_all(bind=engine)
 
 # Conectamos las rutas de reservas a la aplicación
 app.include_router(rutas_reservas.router)

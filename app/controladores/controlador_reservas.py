@@ -1,33 +1,27 @@
+from sqlalchemy.orm import Session
 from app.datos import repositorio_reservas
 from app.modelos.reserva import ReservaBase
 
 # ===== CAPA DE CONTROLADORES =====
-# Coordina las operaciones: recibe la petición desde las rutas,
-# usa el repositorio (capa de datos) y devuelve el resultado.
+# Coordina las operaciones. Ahora recibe la sesión (db) y se la pasa al repositorio.
 
-def listar_reservas():
-    """Devuelve todas las reservas."""
-    return repositorio_reservas.listar()
+def listar_reservas(db: Session):
+    return repositorio_reservas.listar(db)
 
 
-def obtener_reserva(id_reserva):
-    """Devuelve una reserva por id (o None si no existe)."""
-    return repositorio_reservas.buscar_por_id(id_reserva)
+def obtener_reserva(db: Session, id_reserva):
+    return repositorio_reservas.buscar_por_id(db, id_reserva)
 
 
-def crear_reserva(datos: ReservaBase):
-    """Crea una nueva reserva."""
-    # Convertimos el modelo de Pydantic a un diccionario común
+def crear_reserva(db: Session, datos: ReservaBase):
     nueva = datos.model_dump()
-    return repositorio_reservas.crear(nueva)
+    return repositorio_reservas.crear(db, nueva)
 
 
-def actualizar_reserva(id_reserva, datos: ReservaBase):
-    """Actualiza una reserva existente (o None si no existe)."""
+def actualizar_reserva(db: Session, id_reserva, datos: ReservaBase):
     datos_nuevos = datos.model_dump()
-    return repositorio_reservas.actualizar(id_reserva, datos_nuevos)
+    return repositorio_reservas.actualizar(db, id_reserva, datos_nuevos)
 
 
-def eliminar_reserva(id_reserva):
-    """Elimina una reserva. Devuelve True/False."""
-    return repositorio_reservas.eliminar(id_reserva)
+def eliminar_reserva(db: Session, id_reserva):
+    return repositorio_reservas.eliminar(db, id_reserva)
