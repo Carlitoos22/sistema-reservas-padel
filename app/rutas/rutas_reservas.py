@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.modelos.reserva import ReservaBase, Reserva
 from app.controladores import controlador_reservas
 from app.database import get_db
+from fastapi import APIRouter, HTTPException, Depends, Header
 
 # ===== CAPA DE RUTAS =====
 # Cada endpoint obtiene una sesión de base de datos con Depends(get_db)
@@ -28,9 +29,12 @@ def obtener(id_reserva: int, db: Session = Depends(get_db)):
 
 # POST /api/v1/reservas  → crear
 @router.post("", status_code=201)
-def crear(datos: ReservaBase, db: Session = Depends(get_db)):
-    return controlador_reservas.crear_reserva(db, datos)
-
+def crear(
+    datos: ReservaBase,
+    db: Session = Depends(get_db),
+    idempotency_key: str = Header(default=None)
+):
+    return controlador_reservas.crear_reserva(db, datos, idempotency_key)
 
 # PUT /api/v1/reservas/{id}  → actualizar
 @router.put("/{id_reserva}")
