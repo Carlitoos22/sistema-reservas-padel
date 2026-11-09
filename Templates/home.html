@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Inicio — Reservas de Padel{% endblock %}
+
+{% block contenido %}
+<div class="tarjeta tarjeta-centro">
+    {% if usuario %}
+        <h1>Bienvenido, {{ usuario.nombre }}! 👋</h1>
+        <p>Iniciaste sesion como <strong>{{ usuario.rol }}</strong>.</p>
+        <p class="texto-suave">Desde aca vas a poder ver las canchas, reservar turnos
+           y consultar tus reservas. (Lo armamos en la proxima etapa.)</p>
+    {% else %}
+        <h1>Sistema de Reservas de Padel 🎾</h1>
+        <p>Reserva tu cancha en pocos pasos.</p>
+        <p class="texto-suave">Para empezar, inicia sesion o crea una cuenta.</p>
+        <div class="acciones">
+            <a href="/login" class="btn btn-primario">Iniciar sesion</a>
+            <a href="/registro" class="btn">Registrarse</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

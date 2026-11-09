@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Reservas de Padel{% endblock %}</title>
+    <link rel="stylesheet" href="/static/estilos.css">
+</head>
+<body>
+    <header class="barra">
+        <a href="/" class="logo">🎾 Reservas de Padel</a>
+        <nav>
+                {% if request.session.get("user_id") %}
+                <a href="/canchas" class="btn">Canchas</a>
+                <a href="/mis-reservas" class="btn">Mis reservas</a>
+                <span class="saludo">Hola, {{ request.session.get("nombre") }}
+                    <small>({{ request.session.get("rol") }})</small></span>
+                <a href="/logout" class="btn btn-salir">Cerrar sesión</a>
+            {% else %}
+                <a href="/login" class="btn">Iniciar sesion</a>
+                <a href="/registro" class="btn btn-primario">Registrarse</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main class="contenido">
+        {% block contenido %}{% endblock %}
+    </main>
+
+    <footer class="pie">
+        <p>Paradigmas y Lenguajes de Programacion III — UCP · AE4</p>
+    </footer>
+</body>
+</html>

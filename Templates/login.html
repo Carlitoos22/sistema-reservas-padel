@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Iniciar sesion{% endblock %}
+
+{% block contenido %}
+<div class="tarjeta tarjeta-form">
+    <h1>Iniciar sesion</h1>
+    {% if error %}<p class="alerta">{{ error }}</p>{% endif %}
+    <form method="post" action="/login">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required autofocus>
+        <label for="password">Contrasena</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit" class="btn btn-primario btn-ancho">Entrar</button>
+    </form>
+    <p class="texto-suave">No tenes cuenta? <a href="/registro">Registrate aca</a>.</p>
+</div>
+{% endblock %}

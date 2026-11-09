@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}Mis reservas{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<h1>Mis reservas</h1>
+
+{% if reservas %}
+    <div class="reservas-lista">
+    {% for r in reservas %}
+    <div class="reserva-item">
+        <div>
+        <strong>{{ r.cancha }}</strong>
+        <span class="texto-suave">· {{ r.fecha }} · {{ r.hora }}</span>
+        </div>
+        <form method="post" action="/cancelar/{{ r.id }}">
+        <button type="submit" class="btn-cancelar">Cancelar</button>
+        </form>
+    </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p class="texto-suave">Todavía no tenés reservas. <a href="/canchas">Reservá una cancha</a>.</p>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Canchas{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<div class="cab">
+    <h1>Canchas y turnos</h1>
+    <form method="get" action="/canchas" class="filtro-fecha">
+    <label for="fecha">Día</label>
+    <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+    <button type="submit" class="btn btn-primario">Ver</button>
+    </form>
+</div>
+
+{% if msg == "ok" %}<p class="aviso aviso-ok">¡Reserva confirmada! 🎾</p>{% endif %}
+{% if msg == "ocupado" %}<p class="aviso aviso-busy">Ese turno ya estaba ocupado. Probá otro.</p>{% endif %}
+
+<div class="grid-canchas">
+    {% for c in canchas %}
+    <div class="cancha-card">
+    <h3>{{ c.nombre }}</h3>
+    <p class="tipo">{{ c.tipo }}</p>
+    <div class="turnos">
+        {% for t in c.turnos %}
+        {% if t.ocupado %}
+            <div class="turno"><span class="hora">{{ t.hora }}</span><span class="badge badge-busy">Ocupado</span></div>
+        {% else %}
+            <form method="post" action="/reservar" class="turno">
+            <span class="hora">{{ t.hora }}</span>
+            <input type="hidden" name="cancha" value="{{ c.nombre }}">
+            <input type="hidden" name="fecha" value="{{ fecha }}">
+            <input type="hidden" name="hora" value="{{ t.hora }}">
+            <button type="submit" class="btn-reservar">Reservar</button>
+            </form>
+        {% endif %}
+        {% endfor %}
+    </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

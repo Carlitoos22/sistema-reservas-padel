@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Registrarse{% endblock %}
+
+{% block contenido %}
+<div class="tarjeta tarjeta-form">
+    <h1>Crear cuenta</h1>
+    {% if error %}<p class="alerta">{{ error }}</p>{% endif %}
+    <form method="post" action="/registro">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" name="nombre" required autofocus>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Contrasena</label>
+        <input type="password" id="password" name="password" required>
+        <label for="rol">Que sos?</label>
+        <select id="rol" name="rol">
+            <option value="jugador">Jugador (reservo turnos)</option>
+            <option value="dueño">Dueño (administro canchas)</option>
+        </select>
+        <button type="submit" class="btn btn-primario btn-ancho">Crear cuenta</button>
+    </form>
+    <p class="texto-suave">Ya tenes cuenta? <a href="/login">Inicia sesion</a>.</p>
+</div>
+{% endblock %}
