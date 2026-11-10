@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.modelos.reserva import ReservaBase, Reserva
 from app.controladores import controlador_reservas
 from app.database import get_db
+from app.seguridad import requerir_dueno
 from fastapi import APIRouter, HTTPException, Depends, Header
 
 # ===== CAPA DE RUTAS =====
@@ -38,7 +39,8 @@ def crear(
 
 # PUT /api/v1/reservas/{id}  → actualizar
 @router.put("/{id_reserva}")
-def actualizar(id_reserva: int, datos: ReservaBase, db: Session = Depends(get_db)):
+def actualizar(id_reserva: int, datos: ReservaBase, db: Session = Depends(get_db),
+               usuario=Depends(requerir_dueno)):   # solo el dueño modifica reservas por la API
     reserva = controlador_reservas.actualizar_reserva(db, id_reserva, datos)
     if reserva is None:
         raise HTTPException(status_code=404, detail="Reserva no encontrada")
@@ -47,7 +49,8 @@ def actualizar(id_reserva: int, datos: ReservaBase, db: Session = Depends(get_db
 
 # DELETE /api/v1/reservas/{id}  → eliminar
 @router.delete("/{id_reserva}", status_code=204)
-def eliminar(id_reserva: int, db: Session = Depends(get_db)):
+def eliminar(id_reserva: int, db: Session = Depends(get_db),
+             usuario=Depends(requerir_dueno)):     # solo el dueño borra reservas por la API
     borrada = controlador_reservas.eliminar_reserva(db, id_reserva)
     if not borrada:
         raise HTTPException(status_code=404, detail="Reserva no encontrada")

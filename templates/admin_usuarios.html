@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block titulo %}Usuarios — Administración{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<div class="cab"><h1>Usuarios</h1></div>
+
+{% include "_admin_nav.html" %}
+
+<div class="reservas-lista">
+    {% for u in usuarios %}
+    <div class="reserva-item">
+        <div>
+            <strong>{{ u.nombre }}</strong>
+            <span class="texto-suave">· {{ u.email }}</span>
+        </div>
+        <div class="admin-acciones">
+            {% if u.rol == "dueño" %}
+                <span class="badge badge-ok">Dueño</span>
+            {% else %}
+                <span class="badge admin-badge-jugador">Jugador</span>
+            {% endif %}
+            {% if u.id == usuario.id %}
+                <span class="texto-suave">(vos)</span>
+            {% else %}
+            <form method="post" action="/admin/usuarios/{{ u.id }}/rol">
+                {% if u.rol == "dueño" %}
+                <input type="hidden" name="rol" value="jugador">
+                <button type="submit" class="btn-secundario">Quitar dueño</button>
+                {% else %}
+                <input type="hidden" name="rol" value="dueño">
+                <button type="submit" class="btn-secundario">Hacer dueño</button>
+                {% endif %}
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

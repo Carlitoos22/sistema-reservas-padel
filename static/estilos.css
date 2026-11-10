@@ -95,4 +95,51 @@ padding:0.6rem 0.8rem; border-radius:9px; font-size:0.9rem; margin-bottom:0.5rem
 .reserva-item{ display:flex; align-items:center; justify-content:space-between; gap:1rem; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:.9rem 1.1rem; }
 .btn-cancelar{ font-family:var(--display); font-weight:700; border:1px solid var(--busy); color:var(--busy); background:transparent; border-radius:8px; padding:.4rem .9rem; cursor:pointer; font-size:.85rem; }
 .btn-cancelar:hover{ background:color-mix(in srgb, var(--busy) 12%, transparent); }
+/* ===== Administración de canchas (rol dueño) ===== */
+.admin-nueva{ margin:0 0 1.2rem; padding:1.2rem 1.4rem; }
+.admin-nueva h3{ font-family:var(--display); font-weight:700; margin-bottom:.2rem; }
+.admin-campos{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:.75rem; }
+.admin-campo{ display:flex; flex-direction:column; flex:1 1 180px; }
+.admin-item{ flex-wrap:wrap; }
+.admin-item form{ margin:0; }
+.admin-editar{ flex-direction:row; flex-wrap:wrap; align-items:center; gap:.5rem; flex:1 1 320px; }
+.admin-editar input{ flex:1 1 130px; min-width:0; padding:.45rem .6rem; font-size:.95rem; }
+.admin-acciones{ display:flex; align-items:center; gap:.5rem; }
+.admin-inactiva{ opacity:.65; }
+.badge-ok{ color:var(--ok); background:color-mix(in srgb, var(--ok) 16%, transparent); }
+.btn-secundario{ font-family:var(--display); font-weight:700; border:1px solid var(--border); color:var(--fg); background:transparent; border-radius:8px; padding:.4rem .9rem; cursor:pointer; font-size:.85rem; }
+.btn-secundario:hover{ border-color:var(--primary); }
+/* La barra se acomoda en pantallas chicas (con el link de Administración son 5 elementos) */
+@media (max-width:640px){
+    .barra{ flex-wrap:wrap; gap:.6rem; }
+    .barra nav{ flex-wrap:wrap; }
+}
+.admin-nav{ display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1.2rem; border-bottom:1px solid var(--border); padding-bottom:.6rem; }
+.admin-nav a{ color:var(--muted); text-decoration:none; font-weight:600; padding:.4rem .8rem; border-radius:8px; }
+.admin-nav a:hover{ color:var(--fg); }
+.admin-nav a.activo{ background:var(--surface); color:var(--primary); border:1px solid var(--border); }
+.admin-metricas{ display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:.8rem; margin-bottom:1.5rem; }
+.admin-metrica{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1rem 1.1rem; display:flex; flex-direction:column; gap:.2rem; }
+.admin-numero{ font-family:var(--display); font-size:1.7rem; font-weight:800; color:var(--fg); font-variant-numeric:tabular-nums; }
+.admin-subtitulo{ font-family:var(--display); font-size:1.1rem; font-weight:700; margin-bottom:.7rem; }
+.admin-barra{ flex:1; height:8px; background:var(--bg); border:1px solid var(--border); border-radius:999px; overflow:hidden; }
+.admin-barra span{ display:block; height:100%; background:var(--primary); }
+.admin-conteo{ margin-bottom:.6rem; }
+.admin-badge-jugador{ color:var(--muted); background:color-mix(in srgb, var(--muted) 16%, transparent); }
+.filtro-fecha select{ width:auto; }
+.reserva-item form{ margin:0; }
+
 .reservas-lista{ margin-top: 1.5rem; }
+
+/* ---- Comprobante / QR y estados de reserva ---- */
+.reserva-acciones{ display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+.reserva-estado{ display:flex; flex-direction:column; align-items:flex-end; gap:.15rem; text-align:right; }
+.reserva-estado small{ font-size:.75rem; }
+.badge-confirmada{ font-size:.72rem; font-weight:700; padding:.2rem .55rem; border-radius:999px; color:var(--ok); background:color-mix(in srgb, var(--ok) 16%, transparent); }
+.comprobante{ max-width:420px; width:100%; text-align:center; }
+.comprobante .qr{ background:#fff; padding:1rem; border-radius:14px; display:inline-block; margin:1rem 0; }
+.comprobante .qr img{ display:block; width:220px; height:220px; }
+.comprobante .dato{ display:flex; justify-content:space-between; gap:1rem; padding:.5rem 0; border-bottom:1px solid var(--border); font-size:.95rem; }
+.estado-validacion{ font-family:var(--display); font-weight:800; font-size:1.4rem; margin-bottom:1rem; }
+.estado-validacion.valido{ color:var(--ok); }
+.estado-validacion.invalido{ color:var(--busy); }

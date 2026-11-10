@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Reservas — Administración{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<div class="cab">
+    <h1>Todas las reservas</h1>
+    <form method="get" action="/admin/reservas" class="filtro-fecha">
+        <label for="fecha">Día</label>
+        <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+        <select name="cancha" aria-label="Cancha">
+            <option value="">Todas las canchas</option>
+            {% for c in canchas %}
+            <option value="{{ c.nombre }}" {% if c.nombre == cancha %}selected{% endif %}>{{ c.nombre }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primario">Filtrar</button>
+        {% if fecha or cancha %}<a href="/admin/reservas" class="btn">Ver todas</a>{% endif %}
+    </form>
+</div>
+
+{% include "_admin_nav.html" %}
+
+{% if reservas %}
+<p class="texto-suave admin-conteo">{{ reservas | length }} reserva{% if reservas | length != 1 %}s{% endif %}</p>
+<div class="reservas-lista">
+    {% for r in reservas %}
+    <div class="reserva-item">
+        <div>
+            <strong>{{ r.cancha }}</strong>
+            <span class="texto-suave">· {{ r.fecha }} · {{ r.hora }}</span>
+            <div class="texto-suave">Jugador: {{ r.nombre_jugador }}</div>
+        </div>
+        <form method="post" action="/admin/reservas/{{ r.id }}/cancelar"
+              onsubmit="return confirm('¿Cancelar la reserva de {{ r.nombre_jugador }}?');">
+            <button type="submit" class="btn-cancelar">Cancelar</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="texto-suave">No hay reservas{% if fecha or cancha %} con ese filtro{% endif %}.</p>
+{% endif %}
+</div>
+{% endblock %}

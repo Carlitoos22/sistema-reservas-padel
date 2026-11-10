@@ -21,10 +21,12 @@ def hacer_registro(
     nombre: str = Form(...),
     email: str = Form(...),
     password: str = Form(...),
-    rol: str = Form("jugador"),
     db: Session = Depends(get_db),
 ):
-    usuario = controlador_auth.registrar(db, nombre, email, password, rol)
+    # El registro público SIEMPRE crea jugadores. Aunque alguien mande rol=dueño
+    # armando el formulario a mano, se ignora. Los dueños se crean con la variable
+    # de entorno DUENO_EMAIL o los promueve otro dueño desde /admin/usuarios.
+    usuario = controlador_auth.registrar(db, nombre, email, password, "jugador")
     if usuario is None:
         return templates.TemplateResponse(
             request, "registro.html", {"error": "Ese email ya esta registrado."}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Validar reserva{% endblock %}
+
+{% block contenido %}
+<div class="tarjeta comprobante">
+  {% if reserva %}
+    <div class="estado-validacion valido">✓ Reserva válida</div>
+    <div class="dato"><span class="texto-suave">Cancha</span><strong>{{ reserva.cancha }}</strong></div>
+    <div class="dato"><span class="texto-suave">Día</span><strong>{{ reserva.fecha }}</strong></div>
+    <div class="dato"><span class="texto-suave">Turno</span><strong>{{ reserva.hora }}</strong></div>
+    <div class="dato"><span class="texto-suave">Jugador</span><strong>{{ reserva.nombre_jugador }}</strong></div>
+    <div class="dato"><span class="texto-suave">N° de reserva</span><strong>#{{ reserva.id }}</strong></div>
+  {% else %}
+    <div class="estado-validacion invalido">✗ Reserva no encontrada</div>
+    <p class="texto-suave">Esta reserva no existe o fue cancelada.</p>
+  {% endif %}
+</div>
+{% endblock %}

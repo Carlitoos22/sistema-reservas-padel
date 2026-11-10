@@ -15,6 +15,10 @@ if os.getenv("DB_SSL", "false").lower() == "true":
     import ssl
     connect_args["ssl_context"] = ssl.create_default_context()
 
+# SQLite solo se usa en los tests automáticos (pruebas/test_admin_canchas.py)
+if URL_BASE_DATOS.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
+
 engine = create_engine(URL_BASE_DATOS, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

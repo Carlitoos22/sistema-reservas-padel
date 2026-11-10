@@ -13,6 +13,9 @@
                 {% if request.session.get("user_id") %}
                 <a href="/canchas" class="btn">Canchas</a>
                 <a href="/mis-reservas" class="btn">Mis reservas</a>
+                {% if request.session.get("rol") == "dueño" %}
+                <a href="/admin" class="btn">Administración</a>
+                {% endif %}
                 <span class="saludo">Hola, {{ request.session.get("nombre") }}
                     <small>({{ request.session.get("rol") }})</small></span>
                 <a href="/logout" class="btn btn-salir">Cerrar sesión</a>

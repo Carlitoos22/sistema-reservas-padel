@@ -3,28 +3,36 @@
 
 {% block contenido %}
 <div class="pagina">
-<h1>Mis reservas</h1>
+  <h1>Mis reservas</h1>
 
-{% if reservas %}
+  {% if reservas %}
     <div class="reservas-lista">
-    {% for r in reservas %}
-    <div class="reserva-item">
+      {% for r in reservas %}
+      <div class="reserva-item">
         <div>
-        <strong>{{ r.cancha }}</strong>
-        <span class="texto-suave">· {{ r.fecha }} · {{ r.hora }}</span>
+          <strong>{{ r.cancha }}</strong>
+          <span class="texto-suave">· {{ r.fecha }} · {{ r.hora }}</span>
         </div>
-        {% if not r.pasado %}
-        <form method="post" action="/cancelar/{{ r.id }}">
-            <button type="submit" class="btn-cancelar">Cancelar</button>
-        </form>
-        {% else %}
-        <span class="texto-suave">Finalizada</span>
-        {% endif %}
+        <div class="reserva-acciones">
+          <a href="/reserva/{{ r.id }}/comprobante" class="btn">Comprobante</a>
+          {% if r.cancelable %}
+            <form method="post" action="/cancelar/{{ r.id }}">
+              <button type="submit" class="btn-cancelar">Cancelar</button>
+            </form>
+          {% elif r.pasado %}
+            <span class="texto-suave">Finalizada</span>
+          {% else %}
+            <div class="reserva-estado">
+              <span class="badge-confirmada">Confirmada</span>
+              <small class="texto-suave">Para cancelar, aboná la hora completa.</small>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-    </div>
-{% else %}
+  {% else %}
     <p class="texto-suave">Todavía no tenés reservas. <a href="/canchas">Reservá una cancha</a>.</p>
-{% endif %}
+  {% endif %}
 </div>
 {% endblock %}

@@ -1,0 +1,4 @@
+# Dependencias solo para correr las pruebas (no se instalan en Render)
+-r requirements.txt
+pytest
+httpx

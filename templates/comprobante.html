@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block titulo %}Comprobante{% endblock %}
+
+{% block contenido %}
+<div class="tarjeta comprobante">
+  <h1>Comprobante de reserva</h1>
+  <p class="texto-suave">Mostrá este QR en la cancha para validar tu turno.</p>
+
+  <div class="qr">
+    <img src="/reserva/{{ reserva.id }}/qr.png" alt="Código QR de la reserva">
+  </div>
+
+  <div class="dato"><span class="texto-suave">Cancha</span><strong>{{ reserva.cancha }}</strong></div>
+  <div class="dato"><span class="texto-suave">Día</span><strong>{{ reserva.fecha }}</strong></div>
+  <div class="dato"><span class="texto-suave">Turno</span><strong>{{ reserva.hora }}</strong></div>
+  <div class="dato"><span class="texto-suave">Jugador</span><strong>{{ reserva.nombre_jugador }}</strong></div>
+  <div class="dato"><span class="texto-suave">N° de reserva</span><strong>#{{ reserva.id }}</strong></div>
+
+  <div class="acciones">
+    <a href="/mis-reservas" class="btn btn-primario">Volver a mis reservas</a>
+  </div>
+</div>
+{% endblock %}

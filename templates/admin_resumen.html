@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Administración{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<div class="cab">
+    <h1>Administración</h1>
+    <form method="get" action="/admin" class="filtro-fecha">
+        <label for="fecha">Día</label>
+        <input type="date" id="fecha" name="fecha" value="{{ r.fecha }}">
+        <button type="submit" class="btn btn-primario">Ver</button>
+    </form>
+</div>
+
+{% include "_admin_nav.html" %}
+
+<div class="admin-metricas">
+    <div class="admin-metrica">
+        <span class="admin-numero">{{ r.ocupacion }}%</span>
+        <span class="texto-suave">Ocupación del día</span>
+    </div>
+    <div class="admin-metrica">
+        <span class="admin-numero">{{ r.turnos_ocupados }} / {{ r.turnos_totales }}</span>
+        <span class="texto-suave">Turnos reservados</span>
+    </div>
+    <div class="admin-metrica">
+        <span class="admin-numero">{{ r.canchas_activas }} / {{ r.canchas_totales }}</span>
+        <span class="texto-suave">Canchas activas</span>
+    </div>
+    <div class="admin-metrica">
+        <span class="admin-numero">{{ r.jugadores }}</span>
+        <span class="texto-suave">Jugadores registrados</span>
+    </div>
+</div>
+
+<h2 class="admin-subtitulo">Ocupación por cancha</h2>
+{% if r.por_cancha %}
+<div class="reservas-lista">
+    {% for c in r.por_cancha %}
+    <div class="reserva-item">
+        <strong>{{ c.nombre }}</strong>
+        <div class="admin-barra" role="img" aria-label="{{ c.ocupados }} de {{ c.total }} turnos reservados">
+            <span style="width: {{ (c.ocupados * 100 / c.total) | round | int }}%"></span>
+        </div>
+        <span class="texto-suave">{{ c.ocupados }} de {{ c.total }}</span>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="texto-suave">No hay canchas activas. <a href="/admin/canchas">Agregá una</a>.</p>
+{% endif %}
+</div>
+{% endblock %}

@@ -21,3 +21,20 @@ def crear(db: Session, nombre: str, email: str, password_hash: str, rol: str):
     db.commit()
     db.refresh(nuevo)
     return nuevo
+
+def listar(db: Session):
+    return db.query(UsuarioDB).order_by(UsuarioDB.id).all()
+
+
+def cambiar_rol(db: Session, id: int, rol: str):
+    usuario = buscar_por_id(db, id)
+    if usuario is None:
+        return None
+    usuario.rol = rol
+    db.commit()
+    db.refresh(usuario)
+    return usuario
+
+
+def contar_por_rol(db: Session, rol: str):
+    return db.query(UsuarioDB).filter(UsuarioDB.rol == rol).count()

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block titulo %}Administrar canchas{% endblock %}
+
+{% block contenido %}
+<div class="pagina">
+<div class="cab">
+    <h1>Administrar canchas</h1>
+    <a href="/canchas" class="btn">Ver como jugador</a>
+</div>
+
+{% include "_admin_nav.html" %}
+
+<form method="post" action="/admin/canchas/crear" class="tarjeta admin-nueva">
+    <h3>Nueva cancha</h3>
+    <div class="admin-campos">
+        <div class="admin-campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" maxlength="50" placeholder="Cancha 4" required>
+        </div>
+        <div class="admin-campo">
+            <label for="tipo">Tipo</label>
+            <input type="text" id="tipo" name="tipo" maxlength="50" list="tipos" placeholder="Cristal - techada" required>
+        </div>
+        <button type="submit" class="btn btn-primario">Agregar cancha</button>
+    </div>
+</form>
+
+<datalist id="tipos">
+    <option value="Cristal - techada">
+    <option value="Cristal - exterior">
+    <option value="Muro - techada">
+    <option value="Muro - exterior">
+    <option value="Panoramica - techada">
+</datalist>
+
+{% if canchas %}
+<div class="reservas-lista">
+    {% for c in canchas %}
+    <div class="reserva-item admin-item{% if not c.activa %} admin-inactiva{% endif %}">
+        <form method="post" action="/admin/canchas/{{ c.id }}/editar" class="admin-editar">
+            <input type="text" name="nombre" value="{{ c.nombre }}" maxlength="50" aria-label="Nombre de {{ c.nombre }}" required>
+            <input type="text" name="tipo" value="{{ c.tipo }}" maxlength="50" list="tipos" aria-label="Tipo de {{ c.nombre }}" required>
+            <button type="submit" class="btn-reservar">Guardar</button>
+        </form>
+        <div class="admin-acciones">
+            {% if c.activa %}
+                <span class="badge badge-ok">Activa</span>
+            {% else %}
+                <span class="badge badge-busy">Desactivada</span>
+            {% endif %}
+            <form method="post" action="/admin/canchas/{{ c.id }}/estado">
+                <button type="submit" class="btn-secundario">{% if c.activa %}Desactivar{% else %}Activar{% endif %}</button>
+            </form>
+            <form method="post" action="/admin/canchas/{{ c.id }}/eliminar"
+                  onsubmit="return confirm('¿Eliminar {{ c.nombre }}?');">
+                <button type="submit" class="btn-cancelar">Eliminar</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p class="texto-suave">Todavía no hay canchas. Agregá la primera con el formulario de arriba.</p>
+{% endif %}
+</div>
+{% endblock %}
