@@ -7,13 +7,14 @@
     <h1>Canchas y turnos</h1>
     <form method="get" action="/canchas" class="filtro-fecha">
     <label for="fecha">Día</label>
-    <input type="date" id="fecha" name="fecha" value="{{ fecha }}">
+    <input type="date" id="fecha" name="fecha" value="{{ fecha }}" min="{{ hoy }}">
     <button type="submit" class="btn btn-primario">Ver</button>
     </form>
 </div>
 
 {% if msg == "ok" %}<p class="aviso aviso-ok">¡Reserva confirmada! 🎾</p>{% endif %}
 {% if msg == "ocupado" %}<p class="aviso aviso-busy">Ese turno ya estaba ocupado. Probá otro.</p>{% endif %}
+{% if msg == "pasado" %}<p class="aviso aviso-busy">No podés reservar un turno que ya pasó.</p>{% endif %}
 
 <div class="grid-canchas">
     {% for c in canchas %}
@@ -34,6 +35,9 @@
             </form>
         {% endif %}
         {% endfor %}
+        {% if not c.turnos %}
+        <p class="texto-suave">Sin turnos disponibles para este día.</p>
+        {% endif %}
     </div>
     </div>
     {% endfor %}

@@ -13,9 +13,13 @@
         <strong>{{ r.cancha }}</strong>
         <span class="texto-suave">· {{ r.fecha }} · {{ r.hora }}</span>
         </div>
+        {% if not r.pasado %}
         <form method="post" action="/cancelar/{{ r.id }}">
-        <button type="submit" class="btn-cancelar">Cancelar</button>
+            <button type="submit" class="btn-cancelar">Cancelar</button>
         </form>
+        {% else %}
+        <span class="texto-suave">Finalizada</span>
+        {% endif %}
     </div>
     {% endfor %}
     </div>

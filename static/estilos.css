@@ -95,3 +95,4 @@ padding:0.6rem 0.8rem; border-radius:9px; font-size:0.9rem; margin-bottom:0.5rem
 .reserva-item{ display:flex; align-items:center; justify-content:space-between; gap:1rem; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:.9rem 1.1rem; }
 .btn-cancelar{ font-family:var(--display); font-weight:700; border:1px solid var(--busy); color:var(--busy); background:transparent; border-radius:8px; padding:.4rem .9rem; cursor:pointer; font-size:.85rem; }
 .btn-cancelar:hover{ background:color-mix(in srgb, var(--busy) 12%, transparent); }
+.reservas-lista{ margin-top: 1.5rem; }
